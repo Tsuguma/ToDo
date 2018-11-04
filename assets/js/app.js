@@ -14,46 +14,53 @@ if (localStorage.getItem('todoList')){
 		done : []
 	}
 }
-data = JSON.parse(localStorage.getItem('todoList'));
-console.log(data);
-
 // 追加ボタンをクリック
   let add = document.getElementById('add');
   add.addEventListener('click',function() {
     let taskName = document.getElementById('task').value;
-
+    addTaskToDOM(taskName);
     document.getElementById('task').value = '';
 
   //データ保存
+  
   data.not.push(taskName);
-  console.log(data);
   localStorage.setItem('todoList',JSON.stringify(data));
   });
-    
+  //---関数---  
+  
   function addTaskToDOM(taskName){
-  	    let not = document.createElement('li');
+  	let not = document.createElement('li');
     not.textContent = taskName;
     let buttons =document.createElement('div');
     buttons.classList.add('buttons');
     let remove = document.createElement('button');
     remove.classList.add('remove');
     remove.innerHTML = removeIcon;
-    remove.addEventListener('click',function(){
-    	let task = this.parentNode.parentNode;
-    	task.remove();
-    });
+    //削除ボタン動作
+    remove.addEventListener('click',removeTask);
+    
     let done = document.createElement('button');
     done.classList.add('done');
     done.innerHTML = doneIcon;
-    done.addEventListener('click',function(){
-    	let task = this.parentNode.parentNode;
-    	console.log(task);
-      let target = document.getElementById('done');
-      target.appendChild(task);
-    });
+    //完了ボタン動作
+    done.addEventListener('click',doneTask);
+
     buttons.appendChild(remove);
     buttons.appendChild(done);
     not.appendChild(buttons);
     document.getElementById('not-yet').appendChild(not);
-  }
-
+  };
+  function removeTask(){
+  	let task = this.parentNode.parentNode;
+  	let value= task.textContent;
+  	task.remove();
+  	data.not.splice(data.not.indexOf(value),1)
+  	dataObjectUpdated();
+  };
+  function doneTask(){
+  	let task = this.parentNode.parentNode;
+  	document.getElementById('done').appendChild(task);
+    };
+　function dataObjectUpdated(){
+	  localStorage.setItem('todoList',JSON.stringify(data));
+}
