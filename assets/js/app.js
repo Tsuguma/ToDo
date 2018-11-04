@@ -13,13 +13,24 @@ let doneIcon = '<i class="far fa-check-circle fa-lg"></i>';
     let remove = document.createElement('button');
     remove.classList.add('remove');
     remove.innerHTML = removeIcon;
+    remove.addEventListener('click',function(){
+    	let task = this.parentNode.parentNode;
+    	task.remove();
+    })
     let done = document.createElement('button');
     done.classList.add('done');
     done.innerHTML = doneIcon;
+    done.addEventListener('click',function(){
+    	let task = this.parentNode.parentNode;
+    	console.log(task);
+      let target = document.getElementById('done');
+      target.appendChild(task);
+    })
     buttons.appendChild(remove);
     buttons.appendChild(done);
     not.appendChild(buttons);
     document.getElementById('not-yet').appendChild(not);
+    document.getElementById('task').value = '';
 
   })
 
