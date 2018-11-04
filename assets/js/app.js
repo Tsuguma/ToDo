@@ -4,9 +4,7 @@ let data;
 //データ保存されていたが場合
 if (localStorage.getItem('todoList')){
 	data =JSON.parse(localStorage.getItem('todoList'));
-	for (let taskName of data.not){
-		addTaskToDOM(taskName);
-	}
+	renderTodoList();
 }else{
 	//データ保存されていない場合
 	data = {
@@ -20,16 +18,29 @@ if (localStorage.getItem('todoList')){
     let taskName = document.getElementById('task').value;
     addTaskToDOM(taskName);
     document.getElementById('task').value = '';
-
+  
   //データ保存
   
   data.not.push(taskName);
   localStorage.setItem('todoList',JSON.stringify(data));
   });
   //---関数---  
+  function addTask (value) {
+  addTaskToDOM(value);
+  document.getElementById('task').value = '';
+
+  data.task.push(value);
+  dataObjectUpdated();
+}
   
-  function addTaskToDOM(taskName){
-  	let not = document.createElement('li');
+  function addTaskToDOM(taskName,isDone){
+  	let list;
+    if(isDone){
+      list = document.getElementById('done');
+    }else{
+      list = document.getElementById('not-yet');
+    }
+    let not = document.createElement('li');
     not.textContent = taskName;
     let buttons =document.createElement('div');
     buttons.classList.add('buttons');
@@ -48,19 +59,42 @@ if (localStorage.getItem('todoList')){
     buttons.appendChild(remove);
     buttons.appendChild(done);
     not.appendChild(buttons);
-    document.getElementById('not-yet').appendChild(not);
-  };
+    list.appendChild(not);
+  }
   function removeTask(){
   	let task = this.parentNode.parentNode;
-  	let value= task.textContent;
+  	let id = task.parentNode.id;
+    let value= task.textContent;
   	task.remove();
-  	data.not.splice(data.not.indexOf(value),1)
-  	dataObjectUpdated();
-  };
+    if (id === 'not-yet') {
+    data.not.splice(data.not.indexOf(value),1);
+    }else {
+    data.done.splice(data.done.indexOf(value),1);
+    }
+    dataObjectUpdated();
+  }
   function doneTask(){
   	let task = this.parentNode.parentNode;
-  	document.getElementById('done').appendChild(task);
+  	let id = task.parentNode.id;
+    let value = task.textContent;
+
+    let target = document.getElementById('done');
+    target.appendChild(task);
+
+    data.not.splice(data.not.indexOf(value),1);
+    data.done.push(value);
+    dataObjectUpdated();
     };
+
 　function dataObjectUpdated(){
 	  localStorage.setItem('todoList',JSON.stringify(data));
-}
+    }
+
+  function renderTodoList() {
+    for (let taskName of data.not) {
+    addTaskToDOM(taskName);
+    }
+    for (let taskName of data.done) {
+  addTaskToDOM(taskName,true);
+    }
+  }
